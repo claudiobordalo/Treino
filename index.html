@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planner de Treino – 3/4/5 dias (PWA)</title>
+  <meta name="theme-color" content="#0b0f13">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Planner de Treino – 3/4/5 dias</h1>
+      <div class="row">
+        <label class="muted">Data:
+          <input type="date" id="datePick" />
+        </label>
+        <label class="muted">Plano:
+          <select id="planPick">
+            <option value="3d">3 dias – Full Body</option>
+            <option value="4d" selected>4 dias – Upper/Lower</option>
+            <option value="5d">5 dias – U/L + extra</option>
+          </select>
+        </label>
+        <button id="exportCsv" class="ghost">Exportar CSV</button>
+        <button id="compactBtn" class="ghost">Modo compacto</button>
+        <button id="clearDay" class="danger">Limpar dia</button>
+        <span class="muted" id="saveFlag"> </span>
+      </div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="kpi">
+      <div class="card"><div class="small">Dica</div><strong>Mantenha 1–2 reps na reserva (RIR)</strong><div class="small">Progrida quando fizer o topo da faixa.</div></div>
+      <div class="card"><div class="small">Descanso</div><strong>2–3 min compostos</strong><div class="small">60–90s isoladores</div></div>
+      <div class="card"><div class="small">Salvar</div><strong>Auto-salva</strong><div class="small">Dados ficam no seu celular</div></div>
+    </section>
+
+    <section id="days"></section>
+
+    <p class="hint">
+      Toque no nome do exercício para editar. Preencha carga, reps feitas e RPE/RIR.
+      Marque ✓ quando concluir a série. Tudo fica salvo em <em>localStorage</em>.
+    </p>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="register-sw.js"></script>
+</body>
+</html>
