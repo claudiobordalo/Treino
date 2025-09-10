@@ -1,0 +1,92 @@
+:root{
+  --bg:#0b0f13; --card:#121821; --ink:#e9eef5; --muted:#94a3b8; --acc:#42c3a7; --acc2:#7aa2ff; --danger:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:linear-gradient(180deg,#0a0e12,#0e131a 40%,#0b0f13);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(9,13,18,.8);backdrop-filter:blur(8px);border-bottom:1px solid #1f2937}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.25rem;margin:0 0 6px}
+.muted{color:var(--muted);font-size:.9rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,select,button{background:#0f1620;border:1px solid #243042;color:var(--ink);padding:10px 12px;border-radius:10px;font-size:14px}
+button{cursor:pointer}
+button.primary{background:var(--acc);border-color:transparent;color:#051412;font-weight:700}
+button.ghost{background:transparent;border-color:#2a384b}
+button.danger{background:var(--danger);color:#120b0b;border:none}
+.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tab{padding:8px 12px;border:1px solid #2a384b;border-radius:999px;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--acc2);border-color:transparent;color:#0a0f15;font-weight:700}
+.card{background:var(--card);border:1px solid #182233;border-radius:18px;padding:12px;margin:14px 0}
+.day{border:1px solid #223049;border-radius:16px;padding:10px;margin:10px 0;background:#0d141d}
+.day h3{margin:2px 0 8px}
+.ex{display:grid;grid-template-columns:auto 1.2fr .6fr .5fr auto;gap:8px;align-items:center;padding:10px;border-radius:12px;border:1px dashed #233248;background:#0b1118}
+.ex + .ex{margin-top:10px}
+.ex input[type="text"], .ex input[type="number"]{width:100%}
+.ex .sets{display:grid;grid-template-columns:repeat(4,minmax(80px,1fr));gap:6px;grid-column:1/-1}
+.badge{font-size:.75rem;color:#0b1117;background:#1b2533;border:1px solid #273448;padding:4px 8px;border-radius:999px}
+.thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:1px solid #223049;background:#0d141d}
+.hide-thumb .thumb{display:none}
+.footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:8px}
+.hint{font-size:.95rem;color:var(--muted)}
+.kpi{display:flex;gap:12px;flex-wrap:wrap}
+.kpi .card{padding:10px 12px}
+.kpi strong{font-size:1.1rem}
+.small{font-size:.8rem;color:var(--muted)}
+.divider{height:1px;background:#1d2736;margin:10px 0}
+body.compact .wrap{padding:10px}
+body.compact .card{padding:8px;border-radius:12px}
+body.compact input, body.compact select, body.compact button{padding:8px;border-radius:8px;font-size:13px}
+body.compact .ex{padding:8px}
+body.compact .badge{padding:3px 6px}
+@media (max-width:720px){
+  .ex{grid-template-columns:auto 1fr .6fr auto}
+  .ex .sets{grid-template-columns:repeat(2,minmax(80px,1fr));}
+}
+
+
+/* Touch-friendly no mobile */
+@media (max-width: 720px){
+  html, body { font-size: 16px; } /* evita zoom automático do iOS em inputs */
+  .wrap { padding: 12px; }
+
+  /* Layout dos cards de exercício empilhado e claro */
+  .ex{
+    grid-template-columns: 1fr;       /* empilha tudo */
+    gap: 10px;
+    padding: 12px;
+  }
+
+  /* Thumb acima do nome para economizar largura */
+  .ex .thumb{
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    border-radius: 12px;
+  }
+
+  /* Linha de nome / alvo / badge / remover vira blocos */
+  .ex .badge, .ex button.ghost{ justify-self: start; }
+
+  /* Séries em grade 2x2 (mais fácil de tocar) */
+  .ex .sets{
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  /* Inputs maiores e confortáveis ao toque */
+  input, select, button{
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  /* Abas com rolagem horizontal (evita quebra feia) */
+  .tabs{ overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab{ white-space: nowrap; }
+
+  /* Cards informativos mais compactos */
+  .kpi .card{ flex: 1 0 230px; }
+}
+
+/* Melhora a sensação de app no toque */
+* { -webkit-tap-highlight-color: rgba(0,0,0,0); }
