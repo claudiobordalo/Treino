@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planner de Treino – 3/4/5 dias</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Planner de Treino – 3/4/5 dias</h1>
+      <div class="row">
+        <label class="muted">Data:
+          <input type="date" id="datePick" />
+        </label>
+        <label class="muted">Plano:
+          <select id="planPick">
+            <option value="3d">Full Body – 3 dias</option>
+            <option value="4d">Upper/Lower – 4 dias</option>
+            <option value="5d">Push/Pull/Legs – 5 dias</option>
+          </select>
+        </label>
+        <button id="exportCsv" class="ghost">Exportar CSV</button>
+        <button id="compactBtn" class="ghost">Modo compacto</button>
+        <button id="clearDay" class="danger">Limpar dia</button>
+        <span class="muted" id="saveFlag"> </span>
+      </div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="kpi">
+      <div class="card">
+        <div class="small">Dica</div>
+        <strong>Mantenha 1–2 reps na reserva (RIR)</strong>
+        <div class="small">Progrida quando fizer o topo da faixa.</div>
+      </div>
+      <div class="card">
+        <div class="small">Descanso</div>
+        <strong>2–3 min compostos</strong>
+        <div class="small">60–90s isoladores</div>
+      </div>
+      <div class="card">
+        <div class="small">Salvar</div>
+        <strong>Auto-salva</strong>
+        <div class="small">Dados ficam no seu celular</div>
+      </div>
+    </section>
+
+    <section id="days"></section>
+
+    <p class="hint">
+      Escolha entre Full Body (3x), Upper/Lower (4x) ou Push/Pull/Legs (5x).<br>
+      Toque no nome do exercício para editar. Preencha carga, reps feitas e RPE/RIR.
+      Marque ✓ quando concluir a série. Tudo fica salvo em <em>localStorage</em>.
+    </p>
+  </main>
+
+  <script src="script.js"></script>
+
+  <style>
+    .ex img.thumb {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 8px;
+    }
+  </style>
+
+  <script>
+    const templates = {
+      // FULL BODY (3 DIAS)
+      "3d": [
+        { title: "Full Body A", items:[
+          ex("Agachamento livre",4,"6–8","img/agachamento.png"),
+          ex("Supino reto (halteres)",3,"8–10","img/supino_reto.png"),
+          ex("Remada curvada (barra)",3,"8–10","img/remada_curvada.png"),
+          ex("Desenvolvimento ombros",3,"10–12","img/desenvolvimento.png"),
+          ex("Panturrilha em pé",4,"15–20","img/panturrilha.png"),
+          ex("Prancha (s)",3,"30–45s","img/prancha.png")
+        ]},
+        { title: "Full Body B", items:[
+          ex("Levantamento terra romeno",4,"6–8","img/levantamento_terra.png"),
+          ex("Supino inclinado (halteres)",3,"8–10","img/supino_inclinado.png"),
+          ex("Puxada pronada / Barra fixa",3,"8–10","img/barra_fixa.png"),
+          ex("Rosca direta (barra)",3,"10–12","img/rosca_direta.png"),
+          ex("Tríceps pulley (corda)",3,"12–15","img/triceps_pulley.png")
+        ]},
+        { title: "Full Body C", items:[
+          ex("Leg press 45°",4,"10–12","img/leg_press.png"),
+          ex("Desenvolvimento militar",3,"8–10","img/desenvolvimento.png"),
+          ex("Remada baixa",3,"10–12","img/remada_baixa.png"),
+          ex("Crucifixo máquina",3,"12–15","img/crucifixo.png"),
+          ex("Abdominal com peso",3,"15","img/crunch.png")
+        ]}
+      ],
+
+      // UPPER LOWER (4 DIAS)
+      "4d": [
+        { title:"Upper A (Peito/Costas/Tríceps)", items:[
+          ex("Supino inclinado (halteres)",4,"8–10","img/supino_inclinado.png"),
+          ex("Remada curvada (barra)",4,"8–10","img/remada_curvada.png"),
+          ex("Crucifixo máquina",3,"12","img/crucifixo.png"),
+          ex("Tríceps testa (barra EZ)",3,"10–12","img/triceps_testa.png"),
+          ex("Tríceps pulley (corda)",2,"12–15","img/triceps_pulley.png")
+        ]},
+        { title:"Lower A (Quadríceps/Glúteo + Core)", items:[
+          ex("Agachamento livre",4,"6–8","img/agachamento.png"),
+          ex("Leg press 45°",3,"10–12","img/leg_press.png"),
+          ex("Afundo estacionário",3,"10 c/perna","img/afundo.png"),
+          ex("Mesa flexora",3,"12","img/mesa_flexora.png"),
+          ex("Panturrilha em pé",4,"15","img/panturrilha.png"),
+          ex("Prancha (s)",3,"30–45s","img/prancha.png")
+        ]},
+        { title:"Upper B (Ombros/Costas/Bíceps)", items:[
+          ex("Desenvolvimento ombros (halteres)",4,"8–10","img/desenvolvimento.png"),
+          ex("Barra fixa supinada / Puxada fechada",3,"6–10","img/puxada_supinada.png"),
+          ex("Remada unilateral (halter)",3,"10 c/braço","img/remada_unilateral.png"),
+          ex("Elevação lateral",3,"12","img/elevacao_lateral.png"),
+          ex("Rosca direta (barra)",3,"8–10","img/rosca_direta.png"),
+          ex("Rosca concentrada",2,"12","img/rosca_concentrada.png")
+        ]},
+        { title:"Lower B (Posterior/Glúteo + Core)", items:[
+          ex("Levantamento terra romeno",4,"6–8","img/levantamento_terra.png"),
+          ex("Bulgarian split squat",3,"8 c/perna","img/bulgarian.png"),
+          ex("Cadeira flexora",3,"12","img/cadeira_flexora.png"),
+          ex("Hip thrust",3,"10","img/hip_thrust.png"),
+          ex("Panturrilha sentado",3,"20","img/panturrilha_sentado.png"),
+          ex("Crunch com peso",3,"12","img/crunch.png")
+        ]}
+      ],
+
+      // PUSH/PULL/LEGS (5 DIAS)
+      "5d": [
+        { title:"Push A (Peito/Ombro/Tríceps)", items:[
+          ex("Supino reto (halteres)",4,"8–10","img/supino_reto.png"),
+          ex("Crucifixo máquina",3,"12–15","img/crucifixo.png"),
+          ex("Desenvolvimento ombros (halteres)",3,"10–12","img/desenvolvimento.png"),
+          ex("Elevação lateral",3,"12","img/elevacao_lateral.png"),
+          ex("Tríceps testa (barra EZ)",3,"10–12","img/triceps_testa.png"),
+          ex("Tríceps pulley (corda)",3,"12–15","img/triceps_pulley.png")
+        ]},
+        { title:"Pull A (Costas/Bíceps)", items:[
+          ex("Puxada pronada",4,"8–10","img/puxada.png"),
+          ex("Remada curvada (barra)",3,"8–10","img/remada_curvada.png"),
+          ex("Puxada neutra",3,"10–12","img/puxada_neutra.png"),
+          ex("Rosca direta (barra)",3,"8–10","img/rosca_direta.png"),
+          ex("Rosca alternada",3,"10–12","img/rosca_concentrada.png")
+        ]},
+        { title:"Legs A (Quadríceps/Glúteo)", items:[
+          ex("Agachamento livre",4,"6–8","img/agachamento.png"),
+          ex("Leg press 45°",3,"10–12","img/leg_press.png"),
+          ex("Afundo estacionário",3,"10 c/perna","img/afundo.png"),
+          ex("Panturrilha em pé",4,"15–20","img/panturrilha.png")
+        ]},
+        { title:"Push B (Peito/Ombro/Tríceps)", items:[
+          ex("Supino inclinado (halteres)",4,"8–10","img/supino_inclinado.png"),
+          ex("Crossover",3,"12–15","img/crucifixo.png"),
+          ex("Desenvolvimento máquina",3,"10–12","img/desenvolvimento.png"),
+          ex("Elevação frontal",3,"12","img/elevacao_frontal.png"),
+          ex("Tríceps francês (corda)",3,"12","img/triceps_frances.png")
+        ]},
+        { title:"Pull B (Costas/Bíceps)", items:[
+          ex("Puxada supinada",4,"8–10","img/puxada_supinada.png"),
+          ex("Remada baixa",3,"10–12","img/remada_baixa.png"),
+          ex("Rosca Scott",3,"10–12","img/rosca_scott.png"),
+          ex("Face pull",3,"15","img/face_pull.png")
+        ]}
+      ]
+    };
+
+    function ex(name, sets, reps, img){
+      return {name, sets, reps, img}
+    }
+
+    function buildEx(it){
+      const sets = Number(String(it.sets).toString().split(' ')[0])||3;
+      let setsHtml = '';
+    //   for(let i=1;i<=sets;i++){
+    //     setsHtml += `<label class="set badge">S${i} <input type="checkbox"/></label>
+    //     <input class="load" type="number" placeholder="kg" inputmode="decimal" />
+    //     <input class="reps" type="number" placeholder="reps" inputmode="numeric" />
+    //     <input class="rpe" type="number" placeholder="RPE/RIR" inputmode="decimal" />`;
+    //   }
+      return `
+     // <div class="ex">
+        ${it.img?`<img src="${it.img}" alt="${it.name}" class="thumb"/>`:''}
+        <input class="name" type="text" value="${it.name}" />
+        <input class="target" type="text" value="${it.reps}" />
+        <span class="badge">séries: ${it.sets}</span>
+        <button class="ghost" onclick="removeEx(this)">Remover</button>
+        <div class="sets">${setsHtml}</div>
+        // <input class="notes opt" type="text" placeholder="Observações / dor / ajuste" />
+      </div>`
+    }
+  </script>
+</body>
+</html>
